@@ -1,26 +1,35 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+import Counter from './components/Counter';
+import {CounterType} from "./types/counter";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+// Mocked backend function
+const fetchInitialValue = (): Promise<number> => {
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            resolve(Math.floor(Math.random() * 100));
+        }, 500);
+    });
+};
+
+const App: React.FC = () => {
+    const [counters, setCounters] = useState<CounterType[]>([
+        { id: 1, value: Math.floor(Math.random() * 100) },
+    ]);
+
+    const addCounter = async () => {
+        const newCounterValue = await fetchInitialValue();
+        setCounters([...counters, { id: counters.length + 1, value: newCounterValue }]);
+    };
+
+    return (
+        <div>
+            <h1>Dynamic Counters</h1>
+            {counters.map((counter) => (
+                <Counter key={counter.id} initialValue={counter.value} />
+            ))}
+            <button onClick={addCounter}>Add Counter</button>
+        </div>
+    );
+};
 
 export default App;
